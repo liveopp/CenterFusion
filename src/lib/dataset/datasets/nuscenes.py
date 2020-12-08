@@ -23,7 +23,7 @@ from itertools import compress
 
 class nuScenes(GenericDataset):
   default_resolution = [448, 800]
-  num_categories = 10
+  num_categories = 4
   # class_name = [
   #   'car', 'truck', 'bus', 'trailer',
   #   'construction_vehicle', 'pedestrian', 'motorcycle', 'bicycle',
@@ -39,7 +39,7 @@ class nuScenes(GenericDataset):
     6: 2,  # pedestrian
     7: 2,  # motorcycle
     8: 2,  # bicycle
-    9: 9, 10: 10,
+    9: 3, 10: 4,
   }
   focal_length = 1200
   max_objs = 128
