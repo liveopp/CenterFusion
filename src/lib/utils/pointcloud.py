@@ -279,17 +279,17 @@ def pc_dep_to_hm_torch(pc_hm, pc_dep, dep, bbox, dist_thresh, opt):
       dep = dep[0]
     ct = torch.tensor(
       [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=torch.float32)
-    bbox_int = torch.tensor([torch.floor(bbox[0]), 
-                         torch.floor(bbox[1]), 
-                         torch.ceil(bbox[2]), 
-                         torch.ceil(bbox[3])], dtype=torch.int32)# format: xyxy
+    bbox_int = torch.tensor([int(torch.floor(bbox[0]).item()),
+                             int(torch.floor(bbox[1]).item()),
+                             int(torch.ceil(bbox[2]).item()),
+                             int(torch.ceil(bbox[3]).item())], dtype=torch.int32) # format: xyxy
 
     roi = pc_dep[:, bbox_int[1]:bbox_int[3]+1, bbox_int[0]:bbox_int[2]+1]
     pc_dep = roi[opt.pc_feat_channels['pc_dep']]
     pc_vx = roi[opt.pc_feat_channels['pc_vx']]
     pc_vz = roi[opt.pc_feat_channels['pc_vz']]
 
-    pc_dep.sum().data
+    # pc_dep.sum().data
     nonzero_inds = torch.nonzero(pc_dep, as_tuple=True)
     
     if len(nonzero_inds) and len(nonzero_inds[0]) > 0:
