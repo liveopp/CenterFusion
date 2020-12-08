@@ -24,11 +24,23 @@ from itertools import compress
 class nuScenes(GenericDataset):
   default_resolution = [448, 800]
   num_categories = 10
-  class_name = [
-    'car', 'truck', 'bus', 'trailer', 
-    'construction_vehicle', 'pedestrian', 'motorcycle', 'bicycle',
-    'traffic_cone', 'barrier']
-  cat_ids = {i + 1: i + 1 for i in range(num_categories)}
+  # class_name = [
+  #   'car', 'truck', 'bus', 'trailer',
+  #   'construction_vehicle', 'pedestrian', 'motorcycle', 'bicycle',
+  #   'traffic_cone', 'barrier']
+  class_name = ['car', 'human', 'traffic_cone', 'barrier']
+  # cat_ids = {i + 1: i + 1 for i in range(num_categories)}
+  cat_ids = {
+    1: 1,  # car
+    2: 1,  # truck
+    3: 1,  # bus
+    4: -999, # trailer
+    5: -999, # construction_vehicle
+    6: 2,  # pedestrian
+    7: 2,  # motorcycle
+    8: 2,  # bicycle
+    9: 9, 10: 10,
+  }
   focal_length = 1200
   max_objs = 128
   _tracking_ignored_class = ['construction_vehicle', 'traffic_cone', 'barrier']
@@ -36,21 +48,20 @@ class nuScenes(GenericDataset):
   _cycles = ['motorcycle', 'bicycle']
   _pedestrians = ['pedestrian']
   attribute_to_id = {
-    '': 0, 'cycle.with_rider' : 1, 'cycle.without_rider' : 2,
+    '': 0, 'cycle.with_rider': 1, 'cycle.without_rider': 2,
     'pedestrian.moving': 3, 'pedestrian.standing': 4, 
     'pedestrian.sitting_lying_down': 5,
     'vehicle.moving': 6, 'vehicle.parked': 7, 
     'vehicle.stopped': 8}
   id_to_attribute = {v: k for k, v in attribute_to_id.items()}
 
-
   def __init__(self, opt, split):
     split_names = {
-        'mini_train':'mini_train', 
-        'mini_val':'mini_val',
+        'mini_train': 'mini_train',
+        'mini_val': 'mini_val',
         'train': 'train', 
         'train_detect': 'train_detect',
-        'train_track':'train_track', 
+        'train_track': 'train_track',
         'val': 'val',
         'test': 'test',
         'mini_train_2': 'mini_train_2',
@@ -78,14 +89,11 @@ class nuScenes(GenericDataset):
 
     print('Loaded {} {} samples'.format(split, self.num_samples))
 
-
   def __len__(self):
     return self.num_samples
 
-
   def _to_float(self, x):
     return float("{:.2f}".format(x))
-
 
   def convert_coco_format(self, all_bboxes):
     detections = []
@@ -108,7 +116,6 @@ class nuScenes(GenericDataset):
           detections.append(detection)
     return detections
 
-
   def convert_eval_format(self, results):
     ret = {'meta': {'use_camera': True, 'use_lidar': False, 
       'use_radar': self.opt.pointcloud, 
@@ -128,8 +135,7 @@ class nuScenes(GenericDataset):
             if not ('detection_name' in item) else item['detection_name']
         if self.opt.tracking and class_name in self._tracking_ignored_class:
           continue
-        score = float(item['score']) \
-            if not ('detection_score' in item) else item['detection_score']
+        score = float(item['score']) if not ('detection_score' in item) else item['detection_score']
         if 'size' in item:
           size = item['size']
         else:
@@ -190,8 +196,7 @@ class nuScenes(GenericDataset):
           'rotation': rotation,
           'velocity': velocity,
           'detection_name': class_name,
-          'attribute_name': att \
-            if not ('attribute_name' in item) else item['attribute_name'],
+          'attribute_name': att if not ('attribute_name' in item) else item['attribute_name'],
           'detection_score': score,
           'tracking_name': class_name,
           'tracking_score': score,
@@ -201,8 +206,7 @@ class nuScenes(GenericDataset):
 
         sample_results.append(result)
       if sample_token in ret['results']:
-        ret['results'][sample_token] = ret['results'][sample_token] + \
-          sample_results
+        ret['results'][sample_token] = ret['results'][sample_token] + sample_results
       else:
         ret['results'][sample_token] = sample_results
 
@@ -222,7 +226,6 @@ class nuScenes(GenericDataset):
       print("Removed {} detections with IOU > {}".format(n_removed, self.opt.iou_thresh))
 
     return ret
-
 
   def apply_bev_nms(self, dets, iou_thresh, dist_thresh=2):
     """

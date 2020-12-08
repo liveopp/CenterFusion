@@ -23,7 +23,7 @@ python main.py \
     --flip 0.5 \
     --shift 0.1 \
     --pointcloud \
-    --radar_sweeps 3 \
+    --radar_sweeps 6 \
     --pc_z_offset 0.0 \
     --pillar_dims 1.0,0.2,0.2 \
     --max_pc_dist 60.0 \
