@@ -28,7 +28,7 @@ class nuScenes(GenericDataset):
   #   'car', 'truck', 'bus', 'trailer',
   #   'construction_vehicle', 'pedestrian', 'motorcycle', 'bicycle',
   #   'traffic_cone', 'barrier']
-  class_name = ['car', 'human', 'traffic_cone', 'barrier']
+  class_name = ['car', 'pedestrian', 'traffic_cone', 'barrier']
   # cat_ids = {i + 1: i + 1 for i in range(num_categories)}
   cat_ids = {
     1: 1,  # car
