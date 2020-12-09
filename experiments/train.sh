@@ -5,7 +5,7 @@ cd src
 # train
 python main.py \
     ddd \
-    --exp_id centerfusion \
+    --exp_id centerfusion_4_class \
     --shuffle_train \
     --train_split train \
     --val_split mini_val \
@@ -27,9 +27,10 @@ python main.py \
     --pc_z_offset 0.0 \
     --pillar_dims 1.0,0.2,0.2 \
     --max_pc_dist 60.0 \
-    --load_model ../exp/ddd/centerfusion/model_last.pth \
-#    --load_model ../models/centernet_baseline_e170.pth \
+    --load_model ../models/centernet_baseline_e170.pth \
+    --eval_n_plots 6
 
+#    --load_model ../exp/ddd/centerfusion/model_last.pth \
     # --freeze_backbone \
     # --resume \
 

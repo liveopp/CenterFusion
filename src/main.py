@@ -81,13 +81,13 @@ def main(opt):
       break
     
     # train one epoch
-    # log_dict_train, _ = trainer.train(epoch, train_loader)
-    # logger.write('epoch: {} |'.format(epoch))
+    log_dict_train, _ = trainer.train(epoch, train_loader)
+    logger.write('epoch: {} |'.format(epoch))
     
     # log train results
-    # for k, v in log_dict_train.items():
-    #   logger.scalar_summary('train_{}'.format(k), v, epoch)
-    #   logger.write('{} {:8f} | '.format(k, v))
+    for k, v in log_dict_train.items():
+      logger.scalar_summary('train_{}'.format(k), v, epoch)
+      logger.write('{} {:8f} | '.format(k, v))
     
     # evaluate
     if opt.val_intervals > 0 and epoch % opt.val_intervals == 0:
