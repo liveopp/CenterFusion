@@ -3,7 +3,7 @@ cd src
 
 ## Perform detection and evaluation
 python test.py ddd \
-    --exp_id centerfusion \
+    --exp_id centerfusion_val \
     --dataset nuscenes \
     --val_split mini_val \
     --run_dataset_eval \
@@ -16,5 +16,5 @@ python test.py ddd \
     --max_pc_dist 60.0 \
     --pc_z_offset -0.0 \
     --load_model ../models/centerfusion_e60.pth \
-    --flip_test \
+#    --flip_test \
     # --resume \
