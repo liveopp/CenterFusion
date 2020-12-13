@@ -16,5 +16,7 @@ python test.py ddd \
     --max_pc_dist 60.0 \
     --pc_z_offset -0.0 \
     --load_model ../models/centerfusion_e60.pth \
+    --eval_render_curves \
+    --eval_n_plots 10
 #    --flip_test \
     # --resume \
