@@ -1,55 +1,54 @@
-import _init_paths
 import torch
-from dataset.datasets.nuscenes import nuScenes
-from opts import opts
+from dataset.nuscenes import NuScenes
 from tqdm import tqdm
+
+from opts import opts
 
 
 def main(opt):
-    split =  'val'
+    split = 'val'
     batch_size = opt.batch_size
     # attributes = [5,8,9]
     attributes = list(range(18))
 
-    dataset = nuScenes(opt, split)
+    dataset = NuScenes(opt, split)
     opt = opts().update_dataset_info_and_set_heads(opt, dataset)
     loader = torch.utils.data.DataLoader(
         dataset, batch_size=batch_size, shuffle=False, num_workers=1
     )
 
-    mean = torch.zeros((1,len(attributes)))
-    var = torch.zeros((1,len(attributes)))
-    maximum = torch.zeros((1,len(attributes)))
-    minimum = torch.zeros((1,len(attributes)))
+    mean = torch.zeros((1, len(attributes)))
+    var = torch.zeros((1, len(attributes)))
+    maximum = torch.zeros((1, len(attributes)))
+    minimum = torch.zeros((1, len(attributes)))
     num_batches = 0
 
     max_rcs = 0
     for data in tqdm(loader):
         pc = data['pc_2d']  # [batch_size, attr, 1000]
-        N = data['pc_N']    # [batch_size]
-        b_mean = torch.zeros((1,len(attributes))) # [1, attr]
-        b_var = torch.zeros((1,len(attributes)))  # [1, attr]
+        N = data['pc_N']  # [batch_size]
+        b_mean = torch.zeros((1, len(attributes)))  # [1, attr]
+        b_var = torch.zeros((1, len(attributes)))  # [1, attr]
         batch_samples = pc.shape[0]
         num_batches += 1
-        
-        for b in range(batch_samples):
-            b_N = N[b]      # [attr, 1000]
-            if b_N > 1:
-                b_mean += pc[b, attributes, :b_N].mean(1).unsqueeze(0) # [1, attr]
-                b_var += pc[b, attributes, :b_N].var(1).unsqueeze(0) # [1, attr]
 
-                b_max = torch.max(pc[b,5,:b_N], dim=0)[0]
+        for b in range(batch_samples):
+            b_N = N[b]  # [attr, 1000]
+            if b_N > 1:
+                b_mean += pc[b, attributes, :b_N].mean(1).unsqueeze(0)  # [1, attr]
+                b_var += pc[b, attributes, :b_N].var(1).unsqueeze(0)  # [1, attr]
+
+                b_max = torch.max(pc[b, 5, :b_N], dim=0)[0]
                 if max_rcs < b_max:
                     max_rcs = b_max
 
             else:
-                batch_samples -=1
-        mean += b_mean/batch_samples
-        var += b_var/batch_samples
+                batch_samples -= 1
+        mean += b_mean / batch_samples
+        var += b_var / batch_samples
 
         # b_max = torch.max(pc[:,5,:b_N], dim=1)[0]
         # b_max = torch.max(b_max, dim=0)[0]
-        
 
     mean /= num_batches
     var /= num_batches
@@ -58,7 +57,7 @@ def main(opt):
     print('std: ', std)
     print('max_rcs: ', max_rcs)
 
-    with open("pc_stats.txt","w") as f:
+    with open("pc_stats.txt", "w") as f:
         f.write("mean:" + ','.join([str(m) for m in mean.tolist()]))
         f.write("\nstd:" + ','.join([str(s) for s in std.tolist()]))
 
